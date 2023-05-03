@@ -71,15 +71,11 @@ Due to the fields in the header the nodes are identified and authenticated.
 
 ### Status
 
-#### Message type
 ```
 "message_type": "status"
-```
-#### Payload
-```
 "message": {
   "battery": number
 }
 ```
-#### Use cases
+
 Send this regularly as a lifesignal and for uodating the battery state.
