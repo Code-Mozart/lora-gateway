@@ -1,3 +1,5 @@
+_WARNING: This is not up-to date or compatible with the JSON interface!_
+
 # Binary interface
 The mesh nodes use the same gateway interface for both the Mesh and the Multi-Hop.
 
