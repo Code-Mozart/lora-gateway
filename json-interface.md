@@ -31,7 +31,7 @@ The general response pattern looks like this:
 ```
 
 Positive status codes indicate success while negative status codes indicate a failure. The statuses and their codes are:
-| Code | Status              | Message       |
+| code | status              | message       |
 |------|---------------------|---------------|
 | 0    | ok                  | always `null` |
 | 1    | no content          | string        |
