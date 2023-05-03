@@ -14,11 +14,13 @@ The package headers for P2P packages look like this:
   "message": MessageObject (see below)
 }
 ```
-- The `sender_id` is currently defined to be an integer between 0 and 255 (1 byte).
+- The `sender_id` is currently defined to be an integer between 0 and 255 (1 byte). _This is to be discussed with the Mesh group._
 - The `message_id` is a 32-bit integer.
 - The `timestamp` is a 8-byte integer (long int) containing a UNIX timestamp.
 
 ## Multi-Hop
+
+### Response
 For Multi-Hop the gateway will address the targeted node or receive packages from it. After receiving a package from a node (meaning that it did at least reach the gateway) it responds with one of the following responses. These responses use status codes. When the gateway sends a package to a node the node is expected to also respond following this schema.
 
 The general response pattern looks like this:
@@ -43,3 +45,15 @@ Positive status codes indicate success while negative status codes indicate a fa
 |      |                     |               |
 | -20  | backend error       | string        |
 | -21  | backend unavailable | always `null` |
+
+### Package Header
+The package headers for Multi-Hop packages look like this:
+```
+{
+  "sender_id": int,
+  "timestamp": int,
+  "message": MessageObject (see below)
+}
+```
+- The `sender_id` is currently defined to be an integer between 0 and 255 (1 byte). _This is to be discussed with the Multi-Hop group._
+- The `timestamp` is a 8-byte integer (long int) containing a UNIX timestamp.
