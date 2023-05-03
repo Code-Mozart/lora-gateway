@@ -17,8 +17,8 @@ Positive status codes indicate success while negative status codes indicate a fa
 ```
 CODE  MEANING              MESSAGE
 
-0     ok                   yes
-1     no content           no
+0     no content           no
+1     ok                   yes
 
 -1    node error           yes
 -2    unauthorized         yes
