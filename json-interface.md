@@ -1,20 +1,22 @@
 # JSON Interface
 The mesh nodes generally use the same gateway interface for both the Peer-to-Peer (P2P) and the Multi-Hop operation mode. The headers differ between the modes and the Multi-Hop mode has a response whereas the P2P mode can't respond as all nodes are anonymous in the network.
 
-## Mesh
-As part of the mesh the gateway will comply to the protocol used in the mesh for receiving and sending packages.
+## Peer-to-Peer
+As part of the mesh the gateway will comply to the protocol used in the P2P mode for receiving and sending packages.
 
 ### Package Header
 The package headers for P2P packages look like this:
 ```
 {
+  "sender_key": string,
   "sender_id": int,
   "message_id": int,
   "timestamp": int,
   "message": MessageObject (see below)
 }
 ```
-- The `sender_id` is currently defined to be an integer between 0 and 255 (1 byte). _This is to be discussed with the Mesh group._
+- The `sender_id` is currently defined to be an integer between 0 and 255 (1 byte). _(This is to be discussed with the Mesh group.)_
+- The `sender_key` is used to authenticate the node. It is just the sender id signed with the private key of the node using SHA-256. The gateway keeps a list of all nodes public keys and verifies the signature with the public key.
 - The `message_id` is a 32-bit integer.
 - The `timestamp` is a 8-byte integer (long int) containing a UNIX timestamp.
 
@@ -50,10 +52,14 @@ Positive status codes indicate success while negative status codes indicate a fa
 The package headers for Multi-Hop packages look like this:
 ```
 {
+  "sender_key": string,
   "sender_id": int,
   "timestamp": int,
   "message": MessageObject (see below)
 }
 ```
 - The `sender_id` is currently defined to be an integer between 0 and 255 (1 byte). _This is to be discussed with the Multi-Hop group._
+- The `sender_key` is used to authenticate the node. It is just the sender id signed with the private key of the node using SHA-256. The gateway keeps a list of all nodes public keys and verifies the signature with the public key.
 - The `timestamp` is a 8-byte integer (long int) containing a UNIX timestamp.
+
+## Endpoints
