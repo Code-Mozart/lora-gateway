@@ -77,7 +77,7 @@ Due to the fields in the header the nodes are identified and authenticated.
 ```
 #### Payload
 ```
-{
+"message": {
   "battery": number
 }
 ```
