@@ -2,7 +2,7 @@
 The mesh nodes generally use the same gateway interface for both the Peer-to-Peer (P2P) and the Multi-Hop operation mode. The headers differ between the modes and the Multi-Hop mode has a response whereas the P2P mode can't respond as all nodes are anonymous in the network.
 
 ## Security
-The communication between the nodes and the gateway is secured by encrypting the messages with a symmetrical or asymmetrical algorithm.
+The communication between the nodes and the gateway is secured by encrypting the messages with a symmetrical or asymmetrical algorithm. This will / has to be further discussed.
 
 ## Peer-to-Peer
 As part of the mesh the gateway will comply to the protocol used in the P2P mode for receiving and sending packages.
