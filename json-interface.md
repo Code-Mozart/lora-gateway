@@ -11,17 +11,18 @@ As part of the mesh the gateway will comply to the protocol used in the P2P mode
 The package headers for P2P packages look like this:
 ```
 {
-  "sender_key": string,
-  "sender_id": int,
-  "message_id": int,
-  "timestamp": int,
+  "senderUUID": int,
+  "messageUUID": int,
+  "sentAt": int,
   "message": MessageObject (see below)
 }
 ```
-- The `sender_id` is currently defined to be an integer between 0 and 255 (1 byte). _(This is to be discussed with the Mesh group.)_
-- The `sender_key` is used to authenticate the node. It is just the sender id signed with the private key of the node using SHA-256. The gateway keeps a list of all nodes public keys and verifies the signature with the public key.
-- The `message_id` is a 32-bit integer.
-- The `timestamp` is a 8-byte integer (long int) containing a UNIX timestamp.
+- The `senderUUID` is currently defined to be an integer between 0 and 255 (1 byte). _(This is to be discussed with the Mesh group.)_
+<!-- Dropped feature due to missing development resources, this has to be implemented later!
+- The `senderKey` is used to authenticate the node. It is just the sender id signed with the private key of the node using SHA-256. The gateway keeps a list of all nodes public keys and verifies the signature with the public key.
+-->
+- The `messageUUID` is the UUID for this message.
+- The `sentAt` is a 8-byte integer (long int) containing a UNIX timestamp.
 
 ## Multi-Hop
 
@@ -55,27 +56,46 @@ Positive status codes indicate success while negative status codes indicate a fa
 The package headers for Multi-Hop packages look like this:
 ```
 {
-  "sender_key": string,
-  "sender_id": int,
-  "timestamp": int,
-  "message_type": string
+  "senderUUID": int,
+  "sentAt": int,
+  "messageType": string
   "message": MessageObject (see below)
 }
 ```
-- The `sender_id` is currently defined to be an integer between 0 and 255 (1 byte). _This is to be discussed with the Multi-Hop group._
-- The `sender_key` is used to authenticate the node. It is just the sender id signed with the private key of the node using SHA-256. The gateway keeps a list of all nodes public keys and verifies the signature with the public key.
-- The `timestamp` is a 8-byte integer (long int) containing a UNIX timestamp.
+- The `senderUUID` is currently defined to be an integer between 0 and 255 (1 byte). _This is to be discussed with the Multi-Hop group._
+<!-- Dropped feature due to missing development resources, this has to be implemented later!
+- The `senderKey` is used to authenticate the node. It is just the sender id signed with the private key of the node using SHA-256. The gateway keeps a list of all nodes public keys and verifies the signature with the public key.
+-->
+- The `sentAt` is a 8-byte integer (long int) containing a UNIX timestamp.
 
-## Gateway endpoints
+## Message Types
 Due to the fields in the header the nodes are identified and authenticated.
 
-### Status
+### Meassurement
 
 ```
-"message_type": "status"
+"messageType": "meassurement"
 "message": {
-  "battery": number
+  "type": string,
+  "value": string
 }
 ```
 
-Send this regularly as a lifesignal and for uodating the battery state.
+The generic meassurement as discussed with the other teams. Use for:
+- battery status
+- signal strength
+- temperature meassurements
+- pressure measurements
+- ...
+
+### Time Sync
+
+```
+"message_type": "set_time"
+"message": {
+  "type": string,
+  "value": string
+}
+```
+
+The generic meassurement as discussed with the other teams.
