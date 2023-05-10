@@ -80,8 +80,10 @@ Due to the fields in the header the nodes are identified and authenticated.
   "value": string
 }
 ```
+- `type` is any string as discussed with the other teams.
+- `value` is the string representation of the value.
 
-The generic meassurement as discussed with the other teams. Use for:
+The generic meassurement used for:
 - battery status
 - signal strength
 - temperature meassurements
@@ -91,11 +93,11 @@ The generic meassurement as discussed with the other teams. Use for:
 ### Time Sync
 
 ```
-"message_type": "set_time"
+"messageType": "time"
 "message": {
-  "type": string,
-  "value": string
+  "time": int
 }
 ```
+- `time` is a 8-byte integer (long int) containing a UNIX timestamp.
 
-The generic meassurement as discussed with the other teams.
+A time broadcast to correct the internal clocks sent regularly by the gateway.
