@@ -1,4 +1,4 @@
-# JSON Interface
+# Interface Specification
 The mesh nodes generally use the same gateway interface for both the Mesh and the Multi-Hop operation mode. Both modes use MQTT for communicating. In the mesh the broker is shared across all nodes such that each node acts both as a broker and a client.
 
 ## Security
@@ -12,6 +12,8 @@ The MQTT message structure is defined by the mesh. It at least has to support:
   - timestamp: the timestamp for when the message was sent
 
 ## Interface
+
+The interface uses JSON for its payload.
 
 ### Meassurements
 Topic:
@@ -29,7 +31,7 @@ Payload:
 }
 ```
 - `type` is any string as discussed with the other teams.
-- `value` is the string representation of the value. _This is prone to change to a number instead (10 May, 23)._
+- `value` is the string representation of the value. _This is prone to change to a number instead (17 May, 23)._
 
 The generic meassurement used for:
 - battery status
@@ -39,6 +41,7 @@ The generic meassurement used for:
 - ...
 Nodes should publish messages to this topic to make the gateway forward them to the backend.
 
+_Discuss if we really need this at the moment (17 May, 2023)._
 ### Response
 Topic:
 ```
@@ -60,3 +63,9 @@ Payload:
 - `message` is the body of the HTTP response. May be an empty string.
 
 Responses are published by the gateway after the server responded.
+
+### Monitoring
+...
+
+### OTA Updates
+...
