@@ -1,14 +1,16 @@
 from SX127x.LoRa import *
 from http import HTTPStatus
+from httpImpl import HttpImpl
 
 import httpImpl
 import time
 
 
 class LoraImpl(LoRa):
-    def __init__(self):
+    def __init__(self, http_impl: HttpImpl):
         super(LoraImpl, self).__init__(False)
         self.set_mode(MODE.SLEEP)
+        self.http_impl: HttpImpl = httpImpl
 
     def lora_setup(self):
         print("setup")
@@ -29,7 +31,7 @@ class LoraImpl(LoRa):
         while True:
             # self.read_payload()
             # send http request to backend
-            httpImpl.send_data()
+            self.http_impl.send_data()
             # handle request
             print("read")
             time.sleep(10)
