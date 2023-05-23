@@ -14,6 +14,12 @@ from httpImpl import HttpImpl
 
 # https://pypi.org/project/async-cron/
 
+# SETUP:
+# pip install RPi.GPIO
+# pip install spidev
+# pip install pyLoRa
+# pip install psutil
+
 async def pull_patch(minutes):
     while True:
         print('pull patch ...')
