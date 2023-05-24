@@ -16,10 +16,10 @@ The MQTT message structure is defined by the mesh. It at least has to support:
 
 The interface uses JSON for its payload.
 
-### Meassurements
+### Measurements
 Topic:
 ```
-v1/backend/meassurements
+v1/backend/measurements
 ```
 Payload:
 ```
@@ -34,10 +34,10 @@ Payload:
 - `type` is any string as discussed with the other teams.
 - `value` is the string representation of the value. _This is prone to change to a number instead (17 May, 23)._
 
-The generic meassurement used for:
+The generic measurement used for:
 - battery status
 - signal strength
-- temperature meassurements
+- temperature measurements
 - pressure measurements
 - ...
 Nodes should publish messages to this topic to make the gateway forward them to the backend.
