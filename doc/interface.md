@@ -8,6 +8,7 @@ The communication between the nodes and the gateway is to be secured by encrypti
 The MQTT message structure is defined by the mesh. It at least has to support:
 - Topic: the mqtt topic
 - Payload: a variable length byte/string including these fields
+  - message uid: an id that uniquely identifies the message (may be a combination of sender and timestamp)
   - sender uuid: a uuid for the node that sent the message
   - timestamp: the timestamp for when the message was sent
 
@@ -15,10 +16,10 @@ The MQTT message structure is defined by the mesh. It at least has to support:
 
 The interface uses JSON for its payload.
 
-### Meassurements
+### Measurements
 Topic:
 ```
-v1/backend/meassurements
+v1/backend/measurements
 ```
 Payload:
 ```
@@ -31,41 +32,60 @@ Payload:
 }
 ```
 - `type` is any string as discussed with the other teams.
-- `value` is the string representation of the value. _This is prone to change to a number instead (17 May, 23)._
+- `value` is the string representation of the value.
 
-The generic meassurement used for:
+The generic measurement used for:
 - battery status
 - signal strength
-- temperature meassurements
+- temperature measurements
 - pressure measurements
 - ...
 Nodes should publish messages to this topic to make the gateway forward them to the backend.
 
-_Discuss if we really need this at the moment (17 May, 2023)._
-### Response
+### Generic Message Acknowledge
 Topic:
 ```
-v1/backend/responses/{node id}
+v1/acknowledges/{message uid}
+```
+Payload:
+```
+{
+  ... (defined by mesh/multi-hop group, includes sender uuid and timestamp)
+}
+```
+
+Acknowledges are published back to the mesh as soon as a message is received by the gateway.
+
+### Monitoring
+...
+
+
+## OTA Updates
+
+### Patch Block
+Does not use JSON.
+```
+BYTES       CONTENT         DESCRIPTION
+1           0xFF            Escape Symbol
+2                           Version number
+2                           Number of blocks
+2                           Block index
+1-237                       Block content (Fixed block size)
+```
+
+The block size is defined due to limitations from the packet size and headers in the Multi-Hop mode.
+
+### Missing Patch Block
+Topic:
+```
+v1/updates/missing
 ```
 Payload:
 ```
 {
   ... (defined by mesh/multi-hop group, includes sender uuid and timestamp)
   "content": {
-    "statusCode": integer,
-    "status": string,
-    "message": string
+    "missingBlockIndex": int
   }
 }
 ```
-- `statusCode` is a integer HTTP status code (200, 422, ...)
-- `status` is the string representation of the HTTP status code (OK, Unprocessable Entity, ...)
-- `message` is the body of the HTTP response. May be an empty string.
-
-Responses are published by the gateway after the server responded.
-
-### Monitoring
-...
-
-### OTA Updates
-...
