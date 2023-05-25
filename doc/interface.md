@@ -32,7 +32,7 @@ Payload:
 }
 ```
 - `type` is any string as discussed with the other teams.
-- `value` is the string representation of the value. _This is prone to change to a number instead (17 May, 23)._
+- `value` is the string representation of the value.
 
 The generic measurement used for:
 - battery status
@@ -59,5 +59,33 @@ Acknowledges are published back to the mesh as soon as a message is received by 
 ### Monitoring
 ...
 
-### OTA Updates
-...
+
+## OTA Updates
+
+### Patch Block
+Does not use JSON.
+```
+BYTES       CONTENT         DESCRIPTION
+1           0xFF            Escape Symbol
+2                           Version number
+2                           Number of blocks
+2                           Block index
+1-237                       Block content (Fixed block size)
+```
+
+The block size is defined due to limitations from the packet size and headers in the Multi-Hop mode.
+
+### Missing Patch Block
+Topic:
+```
+v1/updates/missing
+```
+Payload:
+```
+{
+  ... (defined by mesh/multi-hop group, includes sender uuid and timestamp)
+  "content": {
+    "missingBlockIndex": int
+  }
+}
+```
