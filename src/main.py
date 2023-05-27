@@ -20,9 +20,10 @@ from httpImpl import HttpImpl
 # pip install pyLoRa
 # pip install psutil
 
-async def pull_patch(minutes):
+async def pull_patch(minutes, http_impl: HttpImpl):
     while True:
-        print('pull patch ...')
+        a = http_impl.get_update()
+        print(a.__str__())
         await asyncio.sleep(minutes * 60)
 
 
@@ -41,10 +42,10 @@ async def main():
         data = json.load(json_file)
 
     system_info_impl = SystemInfoImpl()
-    http_impl = HttpImpl(data['host'], data['port'])
+    http_impl = HttpImpl(data['host'])
     lora_impl = LoraImpl(http_impl)
 
-    pull_patch_task = asyncio.Task(pull_patch(0.08))
+    pull_patch_task = asyncio.Task(pull_patch(0.08, http_impl))
     system_info_task = asyncio.Task(send_system_info(0.016, system_info_impl))
     lora_listen_task = asyncio.Task(lora_listen(lora_impl))
 
