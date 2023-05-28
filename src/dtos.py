@@ -3,25 +3,44 @@ import json
 
 class DTO:
     def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
+        raise Exception('Please implement method')
 
 
 class DataDTO(DTO):
-    def __init__(self, measuredAtTime, measurementType, measuredValue):
-        self.measuredAt = measuredAtTime
-        self.type = measurementType
-        self.value = measuredValue
+    def __init__(self, measured_at_time, measurement_type, measured_value,
+                 uuid = None, created_at = None, updated_at = None):
+        self.measuredAt = measured_at_time
+        self.type = measurement_type
+        self.value = measured_value
+        self.uuid = uuid
+        self.createdAt = created_at
+        self.updatedAt = updated_at
+
+    def to_json(self):
+        body = json.dumps(self, default=lambda o: o.__dict__)
+        body_dict = json.loads(body)
+        body_dict.pop('uuid')
+        body_dict.pop('createdAt')
+        body_dict.pop('updatedAt')
+        return json.dumps(body_dict, default=lambda o: o.__dict__)
 
 
-def update_decoder(obj):
-    return UpdateDTO(obj['id'], obj['createdAt'], obj['updatedAt'], obj['data'], obj['version'])
+def data_decoder(obj):
+    return DataDTO(
+        obj['measuredAt'],
+        obj['measuredAt'],
+        obj['value'],
+        obj['uuid'],
+        obj['createdAt'],
+        obj['updatedAt']
+    )
 
 
 class UpdateDTO(DTO):
-    def __init__(self, id, createdAt, updatedAt, data, version):
+    def __init__(self, id, created_at, updated_at, data, version):
         self.id = id
-        self.createdAt = createdAt
-        self.updatedAt = updatedAt
+        self.createdAt = created_at
+        self.updatedAt = updated_at
         self.data = data
         self.version = version
 
@@ -32,3 +51,16 @@ class UpdateDTO(DTO):
                f'data: {self.data}\n' \
                f'version: {self.version}\n' \
                f'---------------------------'
+
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__)
+
+
+def update_decoder(obj):
+    return UpdateDTO(
+        obj['id'],
+        obj['createdAt'],
+        obj['updatedAt'],
+        obj['data'],
+        obj['version']
+    )
