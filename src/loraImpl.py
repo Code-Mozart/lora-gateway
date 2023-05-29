@@ -39,16 +39,9 @@ class LoraImpl(LoRa):
         # tx?
         print("tx")
 
-    #def lora_listen(self):
-    #    self.set_mode(MODE.RXCONT)  # receiver mode
-    #    time.sleep(5)
-    #    while True:
-    #        # self.read_payload()
-    #        # send http request to backend
-    #        self.http_impl.send_data()
-    #        # handle request
-    #        print("read")
-    #        time.sleep(10)
+    def lora_listen(self):
+        while True:
+            time.sleep(10)
 
     #def lora_write(self):
     #    # self.write_payload()
