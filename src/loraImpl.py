@@ -1,25 +1,39 @@
 from SX127x.LoRa import *
+from SX127x.board_config import BOARD
+
 from http import HTTPStatus
 from httpImpl import HttpImpl
 
 import httpImpl
 import time
 
+import codecs
 
 class LoraImpl(LoRa):
     def __init__(self, http_impl: HttpImpl):
         super(LoraImpl, self).__init__(False)
-        self.set_mode(MODE.SLEEP)
+        self.lora_setup()
         self.http_impl: HttpImpl = httpImpl
 
     def lora_setup(self):
         print("setup")
-        self.set_mode(MODE.STDBY)
         self.set_freq(433.0)
+        self.set_mode(MODE.SLEEP)
+        self.set_coding_rate(8)
+        self.set_bw(BW.BW125)
+        self.set_mode(MODE.STDBY)
 
     def on_rx_done(self):
-        # rx?
-        print("rx")
+        # payload must be read from lora board!
+        payload = self.read_payload(nocheck=True) 
+        print("RX:")
+        print(payload)
+        print(codecs.decode(bytes(payload),"utf-8"))
+        self.set_mode(MODE.SLEEP)
+        self.reset_ptr_rx()
+        BOARD.led_off()
+        self.set_mode(MODE.RXCONT)
+
 
     def on_tx_done(self):
         # tx?

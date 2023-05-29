@@ -2,6 +2,7 @@ import asyncio
 import json
 from systemInfoImpl import SystemInfoImpl
 from contextlib import suppress
+from SX127x.board_config import BOARD
 
 from loraImpl import LoraImpl
 from systemInfoImpl import SystemInfoImpl
@@ -40,8 +41,10 @@ async def main():
     with open('config.json') as json_file:
         data = json.load(json_file)
 
-    system_info_impl = SystemInfoImpl()
+    BOARD.setup()
+
     http_impl = HttpImpl(data['host'], data['port'])
+    system_info_impl = SystemInfoImpl(http_impl)
     lora_impl = LoraImpl(http_impl)
 
     pull_patch_task = asyncio.Task(pull_patch(0.08))
