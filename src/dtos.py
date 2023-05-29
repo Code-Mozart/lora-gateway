@@ -8,7 +8,7 @@ class DTO:
 
 class DataDTO(DTO):
     def __init__(self, measured_at_time, measurement_type, measured_value,
-                 uuid = None, created_at = None, updated_at = None):
+                 uuid=None, created_at=None, updated_at=None):
         self.measuredAt = measured_at_time
         self.type = measurement_type
         self.value = measured_value
@@ -37,8 +37,8 @@ def data_decoder(obj):
 
 
 class UpdateDTO(DTO):
-    def __init__(self, id, created_at, updated_at, data, version):
-        self.id = id
+    def __init__(self, update_id, created_at, updated_at, data, version):
+        self.id = update_id
         self.createdAt = created_at
         self.updatedAt = updated_at
         self.data = data

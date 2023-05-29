@@ -1,11 +1,12 @@
 import asyncio
 import json
-from systemInfoImpl import SystemInfoImpl
 from contextlib import suppress
 
-from loraImpl import LoraImpl
-from systemInfoImpl import SystemInfoImpl
+from dtos import UpdateDTO
 from httpImpl import HttpImpl
+from systemInfoImpl import SystemInfoImpl
+from util import DataSplitter
+from loraImpl import LoraImpl
 
 
 # pylora https://pypi.org/project/pyLoRa/
@@ -20,10 +21,16 @@ from httpImpl import HttpImpl
 # pip install pyLoRa
 # pip install psutil
 
-async def pull_patch(minutes, http_impl: HttpImpl):
+async def pull_patch(minutes, http_impl: HttpImpl, lora_impl: LoraImpl):
     while True:
-        a = http_impl.get_update()
-        print(a.__str__())
+        update: UpdateDTO = http_impl.get_update()
+        ds: DataSplitter = DataSplitter(update.data, 237)  # chunk size according to spezification
+
+        while ds.has_next_chunk():
+            chunk = ds.next_chunk()
+            print(chunk)
+            # lora_impl.write_payload(chunk)
+
         await asyncio.sleep(minutes * 60)
 
 
@@ -45,7 +52,7 @@ async def main():
     http_impl = HttpImpl(data['host'])
     lora_impl = LoraImpl(http_impl)
 
-    pull_patch_task = asyncio.Task(pull_patch(0.08, http_impl))
+    pull_patch_task = asyncio.Task(pull_patch(0.08, http_impl, lora_impl))
     system_info_task = asyncio.Task(send_system_info(0.016, system_info_impl))
     lora_listen_task = asyncio.Task(lora_listen(lora_impl))
 
