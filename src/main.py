@@ -9,6 +9,7 @@ from systemInfoImpl import SystemInfoImpl
 from util import DataSplitter
 from loraImpl import LoraImpl
 
+import time
 
 # pylora https://pypi.org/project/pyLoRa/
 # https://github.com/rpsreal/pySX127x
@@ -51,18 +52,20 @@ async def main():
 
     BOARD.setup()
 
-    http_impl = HttpImpl(data['host'], data['port'])
+    http_impl = HttpImpl(data['host'])
     system_info_impl = SystemInfoImpl(http_impl)
     lora_impl = LoraImpl(http_impl)
 
-    pull_patch_task = asyncio.Task(pull_patch(0.08, http_impl, lora_impl))
-    system_info_task = asyncio.Task(send_system_info(0.016, system_info_impl))
-    lora_listen_task = asyncio.Task(lora_listen(lora_impl))
+    #pull_patch_task = asyncio.Task(pull_patch(0.08, http_impl, lora_impl))
+    #system_info_task = asyncio.Task(send_system_info(0.016, system_info_impl))
+    #lora_listen_task = asyncio.Task(lora_listen(lora_impl))
 
-    with suppress(asyncio.CancelledError):
-        await pull_patch_task
-        await system_info_task
-        await lora_listen_task
+    #with suppress(asyncio.CancelledError):
+        #await pull_patch_task
+        #await system_info_task
+        #await lora_listen_task
+    while(True):
+        time.sleep(10)
 
 
 loop = asyncio.new_event_loop()

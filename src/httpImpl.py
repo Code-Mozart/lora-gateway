@@ -28,24 +28,27 @@ class HttpImpl:
 
 
 def handle_response(response, decoder=None):
-
     content = json.loads(response.content.decode('utf-8'))
-
-    match response.status_code:
-        case 200:
-            print(f'Successful {response.request.method} request to {response.request.url}: \n{content}')
-            return decode_content(content, decoder)
-        case 201:
-            print(f'Created at {response.request.url}: \n{content}')
-            return decode_content(content, decoder)
-        case 401:
-            raise Exception(f'Unauthorized {response.request.url}: \n{content}')
-        case 403:
-            raise Exception(f'Forbidden: {response.request.url}: \n{content}')
-        case 404:
-            raise Exception(f'Unknown URL {response.request.url}: \n{content}')
-        case _:
-            raise Exception(f'Bad Request {response.request.url}: \n{content}')
+    handled = False
+    if response.status_code == 200:
+        print(f'Successful {response.request.method} request to {response.request.url}: \n{content}')
+        handled = True
+        return decode_content(content, decoder)
+    if response.status_code == 201:
+        print(f'Created at {response.request.url}: \n{content}')
+        handled = True
+        return decode_content(content, decoder)
+    if response.status_code == 401:
+        handled = True
+        raise Exception(f'Unauthorized {response.request.url}: \n{content}')
+    if response.status_code == 403:
+        handled = True
+        raise Exception(f'Forbidden: {response.request.url}: \n{content}')
+    if response.status_code == 404:
+        handled = True
+        raise Exception(f'Unknown URL {response.request.url}: \n{content}')
+    if handled == False:
+        raise Exception(f'Bad Request {response.request.url}: \n{content}')
 
 
 def decode_content(content, decoder=None):
