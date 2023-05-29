@@ -21,7 +21,7 @@ class LoraImpl(LoRa):
         self.set_mode(MODE.SLEEP)
         self.set_coding_rate(8)
         self.set_bw(BW.BW125)
-        self.set_mode(MODE.STDBY)
+        self.set_mode(MODE.RXCONT)  # receiver mode
 
     def on_rx_done(self):
         # payload must be read from lora board!
@@ -40,11 +40,18 @@ class LoraImpl(LoRa):
         print("tx")
 
     def lora_listen(self):
+        #self.set_mode(MODE.RXCONT)  # receiver mode
+        time.sleep(5)
         while True:
+            # self.read_payload()
+            # send http request to backend
+            #self.http_impl.send_data()
+            # handle request
+            #print("read")
             time.sleep(10)
 
-    #def lora_write(self):
-    #    # self.write_payload()
-    #    print("write")
+    def lora_write(self):
+        # self.write_payload()
+        print("write")
 
 # TODO: pip install RPi.GPIO & pip install spidev failed
