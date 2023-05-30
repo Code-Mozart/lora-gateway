@@ -6,6 +6,7 @@ from httpImpl import HttpImpl
 
 import httpImpl
 import time
+import asyncio
 
 import codecs
 
@@ -24,8 +25,6 @@ class LoraImpl(LoRa):
         self.set_mode(MODE.RXCONT)
         print(self.get_version())
 
-        while(True):
-            time.sleep(5)
 
     def on_rx_done(self):
         # payload must be read from lora board!
@@ -48,16 +47,15 @@ class LoraImpl(LoRa):
     #    # self.write_payload()
     #    print("write")
 
-    def lora_listen(self):
+    async def lora_listen(self):
         self.set_mode(MODE.RXCONT)  # receiver mode
-        time.sleep(5)
         while True:
             # self.read_payload()
             # send http request to backend
             #self.http_impl.send_data()
             # handle request
             #print("read")
-            time.sleep(10)
+            await asyncio.sleep(10)
 
 
 # TODO: pip install RPi.GPIO & pip install spidev failed

@@ -24,7 +24,10 @@ import time
 # pip install pyLoRa
 # pip install psutil
 
-async def pull_patch(minutes, http_impl: HttpImpl):
+async def pull_patch(minutes, http_impl: HttpImpl, lora_impl: LoraImpl):
+    # Disable because the backend is not yet ready
+    return
+
     while True:
         update: UpdateDTO = http_impl.get_update()
         # TODO: compare version number to previous pulled patch
@@ -41,7 +44,7 @@ async def pull_patch(minutes, http_impl: HttpImpl):
 
 async def send_system_info(minutes, system_info_impl: SystemInfoImpl):
     while True:
-        system_info_impl.get_data()
+        print(system_info_impl.get_data().__str__())
         await asyncio.sleep(minutes * 60)
 
 
