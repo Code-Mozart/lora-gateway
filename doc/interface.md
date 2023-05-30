@@ -10,7 +10,7 @@ The MQTT message structure is defined by the mesh. It at least has to support:
 - Topic: the mqtt topic
 - Payload: a variable length byte/string including these fields
   - message uid: an id that uniquely identifies the message (may be a combination of sender and timestamp)
-  - sender uuid: a uuid for the node that sent the message
+  - sender uid: a uid for the node that sent the message
   - timestamp: the timestamp for when the message was sent
 
 ## Interface
@@ -25,7 +25,7 @@ v1/backend/measurements
 Payload:
 ```
 {
-  ... (defined by mesh/multi-hop group, includes sender uuid and timestamp)
+  ... (defined by mesh/multi-hop group, includes sender uid and timestamp)
   "content": {
     "type": string,
     "value": string
@@ -51,7 +51,7 @@ v1/acknowledges/{message uid}
 Payload:
 ```
 {
-  ... (defined by mesh/multi-hop group, includes sender uuid and timestamp)
+  ... (defined by mesh/multi-hop group, includes sender uid and timestamp)
 }
 ```
 
@@ -59,6 +59,23 @@ Acknowledges are published back to the mesh as soon as a message is received by 
 
 ### Monitoring
 ...
+
+### Register new Node
+Only used for Multi-Hop-Mode
+
+Topic:
+```
+v1/registrations
+```
+Payload:
+```
+{
+  ... (defined by mesh/multi-hop group, includes sender uid and timestamp)
+  content: {
+    "uuid": string
+  }
+}
+```
 
 
 ## OTA Updates
