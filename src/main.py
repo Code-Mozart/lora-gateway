@@ -24,7 +24,7 @@ import time
 # pip install pyLoRa
 # pip install psutil
 
-async def pull_patch(minutes, http_impl: HttpImpl):
+async def pull_patch(minutes, http_impl: HttpImpl, lora_impl: LoraImpl):
     while True:
         update: UpdateDTO = http_impl.get_update()
         ds: DataSplitter = DataSplitter(update.data, 237)  # chunk size according to spezification
