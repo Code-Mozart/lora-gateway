@@ -24,7 +24,7 @@ import time
 # pip install pyLoRa
 # pip install psutil
 
-async def pull_patch(minutes, http_impl: HttpImpl, lora_impl: LoraImpl):
+async def pull_patch(minutes, http_impl: HttpImpl):
     while True:
         update: UpdateDTO = http_impl.get_update()
         # TODO: compare version number to previous pulled patch
