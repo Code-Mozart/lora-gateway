@@ -11,6 +11,7 @@ from loraImpl import LoraImpl
 
 import time
 
+
 # pylora https://pypi.org/project/pyLoRa/
 # https://github.com/rpsreal/pySX127x
 # https://github.com/rpsreal/pySX127x/blob/master/LORA_SERVER.py
@@ -23,15 +24,16 @@ import time
 # pip install pyLoRa
 # pip install psutil
 
-async def pull_patch(minutes, http_impl: HttpImpl, lora_impl: LoraImpl):
+async def pull_patch(minutes, http_impl: HttpImpl):
     while True:
         update: UpdateDTO = http_impl.get_update()
         ds: DataSplitter = DataSplitter(update.data, 237)  # chunk size according to spezification
 
-        while ds.has_next_chunk():
-            chunk = ds.next_chunk()
-            print(chunk)
-            # lora_impl.write_payload(chunk)
+        while ds.has_next_block():
+            total_blocks, block_index, block = ds.next_block()
+            # print(total_blocks)
+            # print(block_index)
+            # print(chunk)
 
         await asyncio.sleep(minutes * 60)
 
@@ -64,7 +66,6 @@ async def main():
         await pull_patch_task
         await system_info_task
         await lora_listen_task
-
 
 
 loop = asyncio.new_event_loop()

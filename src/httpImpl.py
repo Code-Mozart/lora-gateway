@@ -47,7 +47,7 @@ def handle_response(response, decoder=None):
     if response.status_code == 404:
         handled = True
         raise Exception(f'Unknown URL {response.request.url}: \n{content}')
-    if handled == False:
+    if not handled:
         raise Exception(f'Bad Request {response.request.url}: \n{content}')
 
 
