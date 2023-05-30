@@ -1,7 +1,8 @@
 import platform
-import psutil
-import string
 from datetime import datetime
+
+import psutil
+
 from httpImpl import HttpImpl
 
 
@@ -10,35 +11,45 @@ from httpImpl import HttpImpl
 
 class SystemInfoImpl:
     def __init__(self, http_impl: HttpImpl):
+        # updated by method
+        self.cpu_load = None
+        self.ram_usage = None
+        self.system_time: datetime = None
+
+        # fixed values
+        self.started_at: datetime = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        self.system = f'{platform.system()} {platform.release()}'
+
+        # updated when receiving packages
         self.received_packages = 0
-        self.send_packages = 0
-        self.current_cpu_usage = None
-        self.current_ram_usage = None
-        self.start_time: datetime = datetime.now()
-        self.current_time = None
-        self.uptime = None
-        self.system: string = None
-        self.machine: string = None
+        self.last_package_received: datetime = None
+
+        # updated when sending packages
+        self.sent_packages = 0
+        self.last_package_sent: datetime = None
 
     def __str__(self):
-        return f'start_time: {self.start_time}\n' \
-               f'current_time: {self.current_time}\n' \
-               f'uptime: {self.uptime}\n' \
+        return f'cpu_load: {self.cpu_load}\n' \
+               f'ram_usage: {self.ram_usage}\n' \
+               f'started_at: {self.started_at}\n' \
+               f'system_time: {self.system_time}\n' \
                f'system: {self.system}\n' \
-               f'machine: {self.machine}\n' \
-               f'current cpu usage: {self.current_cpu_usage}\n' \
-               f'current ram usage: {self.current_ram_usage}\n' \
-               f'received packages {self.received_packages}\n' \
-               f'send packages {self.send_packages}\n' \
+               f'received_packages: {self.received_packages}\n' \
+               f'sent_packages: {self.sent_packages}\n' \
+               f'last_package_received: {self.last_package_received}\n' \
+               f'last_package_sent: {self.last_package_sent}\n' \
                f'------------------'
 
     def get_data(self):
-        self.current_cpu_usage = psutil.cpu_percent()
-        self.current_ram_usage = psutil.virtual_memory().percent
-        self.current_time = datetime.now()
-        self.uptime = self.current_time - self.start_time
-        self.system = f'{platform.system()} {platform.release()}'
-        self.machine = platform.machine()
-        # TODO: core temp kann hier anscheinend geholt werden, klappt aber nicht unter windows
-        # print(psutil.sensors_temperatures())
+        self.cpu_load = psutil.cpu_percent()
+        self.ram_usage = psutil.virtual_memory().percent
+        self.system_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         return self
+
+    def update_on_package_receive(self):
+        self.received_packages = self.received_packages + 1
+        self.last_package_received = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    def update_on_package_sent(self):
+        self.sent_packages = self.sent_packages + 1
+        self.last_package_sent = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
