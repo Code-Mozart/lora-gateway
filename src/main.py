@@ -27,13 +27,14 @@ import time
 async def pull_patch(minutes, http_impl: HttpImpl, lora_impl: LoraImpl):
     while True:
         update: UpdateDTO = http_impl.get_update()
-        ds: DataSplitter = DataSplitter(update.data, 237)  # chunk size according to spezification
+        # TODO: compare version number to previous pulled patch
+        ds: DataSplitter = DataSplitter(update.data, 237)  # chunk size according to specification
 
         while ds.has_next_block():
             total_blocks, block_index, block = ds.next_block()
             # print(total_blocks)
             # print(block_index)
-            # print(chunk)
+            # print(block)
 
         await asyncio.sleep(minutes * 60)
 

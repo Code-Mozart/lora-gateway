@@ -9,6 +9,7 @@ class HttpImpl:
         self.hostname = hostname
 
         self.headers = {"content-type": "application/json"}
+        # TODO: JWT Token for header
 
     def post_node_data(self, uuid, data_dto: dtos.DataDTO):
         path = f'{paths.meshNodesBaseUrl}{uuid}{paths.meshNodesDataSuffix}'

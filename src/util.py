@@ -28,7 +28,7 @@ class DataSplitter:
         sub_string = self.data_string[self.data_index:self.data_index + self.block_size_bytes]
 
         for i in range(0, len(sub_string)):
-            hex_char = sub_string[i].encode('utf-8').hex()
+            hex_char = sub_string[i].encode('ascii').hex()
             dec_char: int = int(hex_char, 16)
             byte_array.append(dec_char)
 
