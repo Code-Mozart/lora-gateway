@@ -37,7 +37,7 @@ class SystemInfoImpl:
         self.current_ram_usage = psutil.virtual_memory().percent
         self.current_time = datetime.now()
         self.uptime = self.current_time - self.start_time
-        self.system = platform.system()
+        self.system = f'{platform.system()} {platform.release()}'
         self.machine = platform.machine()
         # TODO: core temp kann hier anscheinend geholt werden, klappt aber nicht unter windows
         # print(psutil.sensors_temperatures())

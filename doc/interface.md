@@ -1,3 +1,4 @@
+**Lora Gateway - MDMA SS23**
 # Interface Specification
 The mesh nodes generally use the same gateway interface for both the Mesh and the Multi-Hop operation mode. Both modes use MQTT for communicating. In the mesh the broker is shared across all nodes such that each node acts both as a broker and a client.
 
