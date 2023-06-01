@@ -9,7 +9,7 @@ from httpImpl import HttpImpl
 from systemInfoImpl import SystemInfoImpl
 from util import DataSplitter
 from loraImpl import LoraImpl
-from messageHandler import MessageHandler
+from messageHandler import MessageHandler, MessageHandlerMesh, MessageHandlerHop
 
 import time
 
