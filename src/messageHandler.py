@@ -1,17 +1,23 @@
 import json
 
-import dtos
-from dtos import DTO
+import paths
+from httpImpl import HttpImpl
+from util import DataSplitter
 
-# pass received byte array via lora to decode_message function
+
+# pass received byte array from lora to decode_message function.
 # then call convert method which should check the topic of the message
-# and convert the string into the correct dto object via decoder methods
+# and convert the string into the correct dto object via decoder methods.
+# those object should then be adjusted to the structure needed by the backend.
+# layer between LoRa and backend. Handles (prints) all exceptions
 class MessageHandler:
-    def __init__(self):
+    def __init__(self, http_impl: HttpImpl, data_splitter: DataSplitter):
+        self.http_impl = http_impl
+        self.data_splitter = data_splitter
         pass
 
-    def convert(self):
-        raise Exception('please implement method convert!')
+    def handle(self, message: str):
+        raise Exception('please implement method handle!')
 
     def decode_message(self, byte_array) -> str:
         message: str = ''
@@ -23,20 +29,44 @@ class MessageHandler:
 
 
 class MessageHandlerMesh(MessageHandler):
-    def convert(self, message: str) -> DTO:
+    def handle(self, message: str):
         message_json = json.loads(message)
 
-        # TODO: check for topic and return correct dto
+        # TODO: might work
+        topic: str = message_json['topic']
 
-        # used for testing
-        return dtos.update_decoder(message_json)
+        # TODO: check for all known topics
+        match topic:
+
+            # '/v1/updates/missing'
+            case paths.missingUpdateTopic:
+
+                # TODO: define DTO for this and extract missingBlockIndex
+                block_index: int = 0
+                # TODO: define DTO for sending a missing update and create and return this object here
+                return self.data_splitter.get_block(block_index)
+
+            # '/v1/backend/measurement'
+            case paths.measurementTopic:
+
+                # TODO: define DTO for this and extract uuid
+                uuid: str = 'uuid'
+
+                # TODO: convert to DataDTO and make http request
+                try:
+                    self.http_impl.post_node_data(uuid, 'dataDTO here')
+                    print(f'New measurement for node {uuid}')
+                    return None
+                except Exception as e:
+                    print(str(e))
+                    return None
+
+            case _:
+                print(f'invalid Topic: {topic}')
+                return None
 
 
 class MessageHandlerHop(MessageHandler):
-    def convert(self, message: str) -> DTO:
-        message_json = json.loads(message)
-
-        # TODO: check for topic and return correct dto
-
-        # used for testing
-        return dtos.update_decoder(message_json)
+    def handle(self, message: str):
+        # TODO: adjust according to multi hop group specification
+        return None

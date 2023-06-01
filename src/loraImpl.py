@@ -1,21 +1,17 @@
+import asyncio
+import codecs
+
 from SX127x.LoRa import *
 from SX127x.board_config import BOARD
 
-from http import HTTPStatus
-from httpImpl import HttpImpl
+from messageHandler import MessageHandler
 
-import httpImpl
-import time
-import asyncio
-
-import codecs
 
 class LoraImpl(LoRa):
-    def __init__(self, http_impl: HttpImpl):
+    def __init__(self, message_handler: MessageHandler):
         super(LoraImpl, self).__init__(False)
         self.lora_setup()
-        self.http_impl: HttpImpl = httpImpl
-        
+        self.message_handler: MessageHandler = message_handler
 
     def lora_setup(self):
         print("setup")
@@ -25,25 +21,33 @@ class LoraImpl(LoRa):
         self.set_mode(MODE.RXCONT)
         print(self.get_version())
 
-
     def on_rx_done(self):
         # payload must be read from lora board!
-        payload = self.read_payload(nocheck=True) 
+        payload = self.read_payload(nocheck=True)
         print("RX:")
         print(payload)
-        print(codecs.decode(bytes(payload),"utf-8"))
-        #RESET module after receive!
+        print(codecs.decode(bytes(payload), "utf-8"))
+
+        '''
+        message = self.message_handler.decode_message(payload)
+        block = self.message_handler.handle(message)
+        
+        # .handle(message) should never return anything unless it is a missing block
+        if block is not None:
+            # write block
+        '''
+
+        # RESET module after receive!
         self.set_mode(MODE.SLEEP)
         self.reset_ptr_rx()
         BOARD.led_off()
         self.set_mode(MODE.RXCONT)
 
-
     def on_tx_done(self):
         # tx?
         print("tx")
 
-    #def lora_write(self):
+    # def lora_write(self):
     #    # self.write_payload()
     #    print("write")
 
@@ -52,10 +56,9 @@ class LoraImpl(LoRa):
         while True:
             # self.read_payload()
             # send http request to backend
-            #self.http_impl.send_data()
+            # self.http_impl.send_data()
             # handle request
-            #print("read")
+            # print("read")
             await asyncio.sleep(10)
-
 
 # TODO: pip install RPi.GPIO & pip install spidev failed

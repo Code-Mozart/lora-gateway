@@ -26,17 +26,18 @@ import time
 # pip install pyLoRa
 # pip install psutil
 
-async def pull_patch(minutes, http_impl: HttpImpl, lora_impl: LoraImpl):
+async def pull_patch(minutes, data_splitter: DataSplitter, http_impl: HttpImpl, lora_impl: LoraImpl):
     # Disable because the backend is not yet ready
     return
 
     while True:
         update: UpdateDTO = http_impl.get_update()
         # TODO: compare version number to previous pulled patch
-        ds: DataSplitter = DataSplitter(update.data, 237)  # chunk size according to specification
+        data_splitter.set_new_data(update.data)
 
-        while ds.has_next_block():
-            total_blocks, block_index, block = ds.next_block()
+        while data_splitter.has_next_block():
+            total_blocks, block_index, block = data_splitter.next_block()
+            # TODO: write to LoRa here
             # print(total_blocks)
             # print(block_index)
             # print(block)
@@ -65,12 +66,14 @@ async def main(mode: str = 'mesh'):
 
     BOARD.setup()
 
-    http_impl = HttpImpl(data['host'])
-    system_info_impl = SystemInfoImpl(http_impl)
-    lora_impl = LoraImpl(http_impl)
-    message_handler: MessageHandler = MessageHandlerMesh() if mode == 'mesh' else MessageHandlerHop()
+    data_splitter: DataSplitter = DataSplitter(237)
+    http_impl: HttpImpl = HttpImpl(data['host'])
+    system_info_impl: SystemInfoImpl = SystemInfoImpl(http_impl)
+    message_handler: MessageHandler = \
+        MessageHandlerMesh(http_impl, data_splitter) if mode == 'mesh' else MessageHandlerHop(http_impl, data_splitter)
+    lora_impl: LoraImpl = LoraImpl(message_handler)
 
-    pull_patch_task = asyncio.Task(pull_patch(0.08, http_impl, lora_impl))
+    pull_patch_task = asyncio.Task(pull_patch(0.08, data_splitter, http_impl, lora_impl))
     system_info_task = asyncio.Task(send_system_info(0.016, system_info_impl))
     lora_listen_task = asyncio.Task(lora_listen(lora_impl))
 

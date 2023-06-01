@@ -1,7 +1,9 @@
-import requests
 import json
+
+import requests
+
 import paths
-import dtos
+from dtos import DataDTO, update_decoder
 
 
 class HttpImpl:
@@ -11,7 +13,7 @@ class HttpImpl:
         self.headers = {"content-type": "application/json"}
         # TODO: JWT Token for header
 
-    def post_node_data(self, uuid, data_dto: dtos.DataDTO):
+    def post_node_data(self, uuid, data_dto: DataDTO):
         path = f'{paths.meshNodesBaseUrl}{uuid}{paths.meshNodesDataSuffix}'
         url = f'{self.hostname}{path}'
         response = requests.post(url, data_dto.to_json(), headers=self.headers)
@@ -23,7 +25,7 @@ class HttpImpl:
         response = requests.get(url)
 
         try:
-            return handle_response(response, dtos.update_decoder)
+            return handle_response(response, update_decoder)
         except Exception as e:
             raise Exception(str(e))
 

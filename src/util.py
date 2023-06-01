@@ -2,8 +2,8 @@ import math
 
 
 class DataSplitter:
-    def __init__(self, data_string: str, block_size_bytes: int):
-        self.data_string = data_string
+    def __init__(self, block_size_bytes: int):
+        self.data_string = None
         self.block_size_bytes = block_size_bytes
 
         # index for splitting the data_string into blocks
@@ -13,8 +13,17 @@ class DataSplitter:
         self.block_index = -1
         self.byte_array_array = []
 
+        self.total_length = None
+        self.total_blocks = None
+
+    def set_new_data(self, data_string: str):
+        self.data_string = data_string
         self.total_length = len(data_string)
-        self.total_blocks = math.ceil(len(data_string) / block_size_bytes)
+        self.total_blocks = math.ceil(len(data_string) / self.block_size_bytes)
+
+        self.data_index = 0
+        self.block_index = -1
+        self.byte_array_array = []
 
     def has_next_block(self) -> bool:
         if self.data_index <= self.total_length:
