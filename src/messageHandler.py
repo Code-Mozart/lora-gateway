@@ -2,6 +2,7 @@ import json
 
 import paths
 from httpImpl import HttpImpl
+from meshDtos import mesh_measurement_decoder
 from util import DataSplitter
 
 
@@ -23,7 +24,10 @@ class MessageHandler:
         message: str = ''
         for byte in byte_array:
             h = hex(byte)[2:]
-            message += bytes.fromhex(h).decode('ascii')
+            # print(h)
+            # ignore new line (a) and whitespace (20)
+            if h != 'a' and h != '20':
+                message += bytes.fromhex(h).decode('ascii')
 
         return message
 
@@ -49,14 +53,15 @@ class MessageHandlerMesh(MessageHandler):
             # '/v1/backend/measurement'
             case paths.measurementTopic:
 
-                # TODO: define DTO for this and extract uuid
-                uuid: str = 'uuid'
-
-                # TODO: convert to DataDTO and make http request
                 try:
-                    self.http_impl.post_node_data(uuid, 'dataDTO here')
-                    print(f'New measurement for node {uuid}')
+                    measurement = mesh_measurement_decoder(message_json)
+                    data = measurement.convert_to_dto()
+
+                    self.http_impl.post_node_data(measurement.uuid, data)
+                    print(f'New measurement for node {measurement.uuid}')
+
                     return None
+
                 except Exception as e:
                     print(str(e))
                     return None
