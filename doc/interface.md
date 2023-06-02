@@ -43,23 +43,6 @@ The generic measurement used for:
 - ...
 Nodes should publish messages to this topic to make the gateway forward them to the backend.
 
-### Generic Message Acknowledge
-Topic:
-```
-v1/acknowledges/{message uid}
-```
-Payload:
-```
-{
-  ... (defined by mesh/multi-hop group, includes sender uid and timestamp)
-}
-```
-
-Acknowledges are published back to the mesh as soon as a message is received by the gateway.
-
-### Monitoring
-...
-
 ### Register new Node
 Only used for Multi-Hop-Mode
 
@@ -76,7 +59,6 @@ Payload:
   }
 }
 ```
-
 
 ## OTA Updates
 
