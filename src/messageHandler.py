@@ -2,7 +2,7 @@ import json
 
 import paths
 from httpImpl import HttpImpl
-from meshDtos import mesh_measurement_decoder
+from meshDtos import mesh_package_decoder, mesh_missing_block_decoder
 from util import DataSplitter
 
 
@@ -15,7 +15,6 @@ class MessageHandler:
     def __init__(self, http_impl: HttpImpl, data_splitter: DataSplitter):
         self.http_impl = http_impl
         self.data_splitter = data_splitter
-        pass
 
     def handle(self, message: str):
         raise Exception('please implement method handle!')
@@ -45,16 +44,18 @@ class MessageHandlerMesh(MessageHandler):
             # '/v1/updates/missing'
             case paths.missingUpdateTopic:
 
-                # TODO: define DTO for this and extract missingBlockIndex
-                block_index: int = 0
-                # TODO: define DTO for sending a missing update and create and return this object here
-                return self.data_splitter.get_block(block_index)
+                try:
+                    missing_block = mesh_missing_block_decoder(message_json)
+                    return self.data_splitter.get_block(missing_block.content.missing_block_index)
+                except Exception as e:
+                    print(str(e))
+                    return None
 
             # '/v1/backend/measurement'
             case paths.measurementTopic:
 
                 try:
-                    measurement = mesh_measurement_decoder(message_json)
+                    measurement = mesh_package_decoder(message_json)
                     data = measurement.convert_to_dto()
 
                     self.http_impl.post_node_data(measurement.uuid, data)

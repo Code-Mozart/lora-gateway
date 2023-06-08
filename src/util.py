@@ -47,7 +47,10 @@ class DataSplitter:
         return self.total_blocks, self.block_index, byte_array
 
     def get_block(self, index: int):
+        if self.data_string is None:
+            raise Exception('No update available yet')
+
         if index > self.block_index or index < 0:
-            return []
+            raise Exception('Invalid index for update block')
 
         return self.byte_array_array[index]
