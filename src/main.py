@@ -47,7 +47,7 @@ async def pull_patch(minutes, data_splitter: DataSplitter, http_impl: HttpImpl, 
 
 async def send_system_info(minutes, system_info_impl: SystemInfoImpl):
     while True:
-        print(system_info_impl.get_data().__str__())
+        #print(system_info_impl.get_data().__str__())
         await asyncio.sleep(minutes * 60)
 
 

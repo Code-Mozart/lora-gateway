@@ -24,18 +24,18 @@ class LoraImpl(LoRa):
     def on_rx_done(self):
         # payload must be read from lora board!
         payload = self.read_payload(nocheck=True)
-        print("RX:")
-        print(payload)
-        print(codecs.decode(bytes(payload), "utf-8"))
+        #print("RX:")
+        #print(payload)
+        #print(codecs.decode(bytes(payload), "utf-8"))
 
-        '''
+        
         message = self.message_handler.decode_message(payload)
         block = self.message_handler.handle(message)
         
         # .handle(message) should never return anything unless it is a missing block
-        if block is not None:
-            # write block
-        '''
+        # if block is not None:
+        print(message)
+        
 
         # RESET module after receive!
         self.set_mode(MODE.SLEEP)

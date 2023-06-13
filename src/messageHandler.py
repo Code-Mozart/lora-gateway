@@ -23,7 +23,7 @@ class MessageHandler:
         message: str = ''
         for byte in byte_array:
             h = hex(byte)[2:]
-            # print(h)
+            #print(h)
             # ignore new line (a) and whitespace (20)
             if h != 'a' and h != '20':
                 message += bytes.fromhex(h).decode('ascii')
@@ -39,26 +39,25 @@ class MessageHandlerMesh(MessageHandler):
         topic: str = message_json['topic']
 
         # TODO: check for all known topics
-        match topic:
 
-            # '/v1/updates/missing'
-            case paths.missingUpdateTopic:
+        # '/v1/updates/missing'
+        if topic == paths.missingUpdateTopic:
 
-                try:
-                    missing_block = mesh_missing_block_decoder(message_json)
-                    return self.data_splitter.get_block(missing_block.content.missing_block_index)
-                except Exception as e:
-                    print(str(e))
-                    return None
+            try:
+                missing_block = mesh_missing_block_decoder(message_json)
+                return self.data_splitter.get_block(missing_block.content.missing_block_index)
+            except Exception as e:
+                print(str(e))
+                return None
 
-            # '/v1/backend/measurement'
-            case paths.measurementTopic:
-
+        # '/v1/backend/measurement'
+        else: 
+            if topic == paths.measurementTopic:
                 try:
                     measurement = mesh_package_decoder(message_json)
                     data = measurement.convert_to_dto()
 
-                    self.http_impl.post_node_data(measurement.uuid, data)
+                    #self.http_impl.post_node_data(measurement.uuid, data)
                     print(f'New measurement for node {measurement.uuid}')
 
                     return None
@@ -66,10 +65,9 @@ class MessageHandlerMesh(MessageHandler):
                 except Exception as e:
                     print(str(e))
                     return None
-
-            case _:
-                print(f'invalid Topic: {topic}')
-                return None
+                else:
+                    print(f'invalid Topic: {topic}')
+                    return None
 
 
 class MessageHandlerHop(MessageHandler):
