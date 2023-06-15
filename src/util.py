@@ -36,10 +36,19 @@ class DataSplitter:
         byte_array = []
         sub_string = self.data_string[self.data_index:self.data_index + self.block_size_bytes]
 
+        # TODO: if update is a hex string this is wrong, if its an ASCII string this will work
         for i in range(0, len(sub_string)):
             hex_char = sub_string[i].encode('ascii').hex()
             dec_char: int = int(hex_char, 16)
             byte_array.append(dec_char)
+
+        # TODO: this should be correct if the update is a hex string --> index wont work this way
+        '''
+        for i in range(0, len(sub_string), 2):
+            hex_char = sub_string[i]
+            dec_char: int = int(hex_char, 16)
+            byte_array.append(dec_char)
+        '''
 
         self.data_index += self.block_size_bytes
         self.byte_array_array.append(byte_array)

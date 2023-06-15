@@ -6,4 +6,4 @@ updateBaseUrl = '/update'
 
 # mesh
 missingUpdateTopic = 'v1/updates/missing'
-measurementTopic = 'v1/backend/measurement'
+measurementTopic = 'v1/backend/measurements'
