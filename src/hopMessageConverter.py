@@ -1,3 +1,6 @@
+from util import get_available_network_id
+
+
 def parse_message(message: str):
     # fixed header
     control_packet_type = message[0]
@@ -56,7 +59,10 @@ class ConnectMessage(HopMessage):
         # 16 bytes uuid
         self.uuid = self.message[self.uuid_bytes * 2:]
 
-        return ConnectAck('00', '00', self.uuid), None, None
+        # get available network id in two digit hex string
+        available_id = "%0.2X" % get_available_network_id()
+
+        return ConnectAck('00', available_id, self.uuid), None, None
 
 
 class PublishMessage(HopMessage):

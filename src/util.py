@@ -1,4 +1,5 @@
 import math
+import json
 
 
 class DataSplitter:
@@ -63,3 +64,18 @@ class DataSplitter:
             raise Exception('Invalid index for update block')
 
         return self.byte_array_array[index]
+
+
+# end excluded
+def get_available_network_id(start: int = 1, end: int = 254):
+    with open('ids.json') as json_file_read:
+        data = json.load(json_file_read)
+
+    for i in range(start, end):
+        if i not in data['used']:
+            data['used'].append(i)
+
+            with open('ids.json', 'w') as json_file_write:
+                json.dump(data, json_file_write)
+
+            return i
