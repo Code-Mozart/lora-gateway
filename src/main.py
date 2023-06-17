@@ -4,7 +4,8 @@ import sys
 from contextlib import suppress
 from SX127x.board_config import BOARD
 
-from dtos import UpdateDTO
+from uuid import uuid4
+from dtos import UpdateDTO, BulkDataDTO
 from httpImpl import HttpImpl
 from systemInfoImpl import SystemInfoImpl
 from util import DataSplitter
@@ -45,9 +46,11 @@ async def pull_patch(minutes, data_splitter: DataSplitter, http_impl: HttpImpl, 
         await asyncio.sleep(minutes * 60)
 
 
-async def send_system_info(minutes, system_info_impl: SystemInfoImpl):
+async def send_system_info(minutes, system_info_impl: SystemInfoImpl, http_impl: HttpImpl, gateway_uuid: str):
     while True:
-        #print(system_info_impl.get_data().__str__())
+        data: BulkDataDTO = system_info_impl.get_data()
+        http_impl.post_node_data_bulk(gateway_uuid, data)
+
         await asyncio.sleep(minutes * 60)
 
 
@@ -62,7 +65,15 @@ async def main(mode: str = 'mesh'):
         raise ValueError('mode must be one of %r' % valid_modes)
 
     with open('config.json') as json_file:
-        data = json.load(json_file)
+        data: dict = json.load(json_file)
+
+    # generate uuid for gateway
+    if 'uuid' not in data:
+        uuid = str(uuid4())
+        data['uuid'] = uuid
+
+        with open('config.json', 'w') as json_file_write:
+            json.dump(data, json_file_write)
 
     BOARD.setup()
 
@@ -73,8 +84,9 @@ async def main(mode: str = 'mesh'):
         MessageHandlerMesh(http_impl, data_splitter) if mode == 'mesh' else MessageHandlerHop(http_impl, data_splitter)
     lora_impl: LoraImpl = LoraImpl(message_handler)
 
+    # TODO: adjust interval times (e.g. patch every 24 hours, system info every 10 minutes)
     pull_patch_task = asyncio.Task(pull_patch(0.08, data_splitter, http_impl, lora_impl))
-    system_info_task = asyncio.Task(send_system_info(0.016, system_info_impl))
+    system_info_task = asyncio.Task(send_system_info(0.016, system_info_impl, http_impl, data['uuid']))
     lora_listen_task = asyncio.Task(lora_listen(lora_impl))
 
     with suppress(asyncio.CancelledError):

@@ -1,6 +1,7 @@
 # backend
 meshNodesBaseUrl = '/mesh-nodes/'
 meshNodesDataSuffix = '/data'
+meshNodesDataListSuffix = '/data-list'
 
 updateBaseUrl = '/update'
 

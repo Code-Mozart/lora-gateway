@@ -4,6 +4,7 @@ from datetime import datetime
 import psutil
 
 from httpImpl import HttpImpl
+from dtos import DataDTO, BulkDataDTO
 
 
 # initiale registrierung des gateways am backend mit infos wie system, machine?
@@ -40,11 +41,26 @@ class SystemInfoImpl:
                f'last_package_sent: {self.last_package_sent}\n' \
                f'------------------'
 
-    def get_data(self):
+    def get_data(self) -> BulkDataDTO:
         self.cpu_load = psutil.cpu_percent()
         self.ram_usage = psutil.virtual_memory().percent
         self.system_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-        return self
+
+        data = BulkDataDTO()
+        data.append(DataDTO(self.system_time, 'cpu_load', str(self.cpu_load)))
+        data.append(DataDTO(self.system_time, 'ram_usage', str(self.ram_usage)))
+        data.append(DataDTO(self.system_time, 'started_at', self.started_at))
+        data.append(DataDTO(self.system_time, 'system', self.system))
+        data.append(DataDTO(self.system_time, 'received_packages', str(self.received_packages)))
+        data.append(DataDTO(self.system_time, 'sent_packages', str(self.sent_packages)))
+
+        if self.last_package_received is not None:
+            data.append(DataDTO(self.system_time, 'last_package_received', self.last_package_received))
+
+        if self.last_package_sent is not None:
+            data.append(DataDTO(self.system_time, 'last_package_sent', self.last_package_sent))
+
+        return data
 
     def update_on_package_receive(self):
         self.received_packages = self.received_packages + 1

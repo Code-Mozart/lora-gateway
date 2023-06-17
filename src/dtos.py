@@ -8,20 +8,18 @@ class DTO:
 
 class DataDTO(DTO):
     def __init__(self, measured_at_time, measurement_type, measured_value,
-                 uuid=None, created_at=None, updated_at=None):
+                 backend_id=None, created_at=None):
         self.measuredAt = measured_at_time
         self.type = measurement_type
         self.value = measured_value
-        self.uuid = uuid
+        self.backend_id = backend_id
         self.createdAt = created_at
-        self.updatedAt = updated_at
 
     def to_json(self):
         body = json.dumps(self, default=lambda o: o.__dict__)
         body_dict = json.loads(body)
-        body_dict.pop('uuid')
+        body_dict.pop('backend_id')
         body_dict.pop('createdAt')
-        body_dict.pop('updatedAt')
         return json.dumps(body_dict, default=lambda o: o.__dict__)
 
 
@@ -30,10 +28,27 @@ def data_decoder(obj):
         obj['measuredAt'],
         obj['measuredAt'],
         obj['value'],
-        obj['uuid'],
-        obj['createdAt'],
-        obj['updatedAt']
+        obj['backend_id'],
+        obj['createdAt']
     )
+
+
+class BulkDataDTO(DTO):
+    def __init__(self):
+        self.bulk_data = []
+
+    def append(self, data_dto: DataDTO):
+        self.bulk_data.append(data_dto)
+
+    def to_json(self):
+        body = json.dumps(self, default=lambda o: o.__dict__)
+        body_dict = json.loads(body)
+        return json.dumps(body_dict['bulk_data'], default=lambda o: o.__dict__)
+
+
+def bulk_data_decoder():
+    # implement when needed
+    return None
 
 
 class UpdateDTO(DTO):
