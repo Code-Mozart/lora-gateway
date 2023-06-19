@@ -5,7 +5,7 @@ from contextlib import suppress
 from SX127x.board_config import BOARD
 
 from uuid import uuid4
-from dtos import UpdateDTO, BulkDataDTO
+from dtos import UpdateDTO, BulkDataDTO, DataDTO
 from httpImpl import HttpImpl
 from systemInfoImpl import SystemInfoImpl
 from util import DataSplitter
@@ -48,8 +48,21 @@ async def pull_patch(minutes, data_splitter: DataSplitter, http_impl: HttpImpl, 
 
 async def send_system_info(minutes, system_info_impl: SystemInfoImpl, http_impl: HttpImpl, gateway_uuid: str):
     while True:
-        data: BulkDataDTO = system_info_impl.get_data()
-        http_impl.post_node_data_bulk(gateway_uuid, data)
+        system_data = system_info_impl.get_data()
+        bulk_data = BulkDataDTO()
+        bulk_data.append(DataDTO(system_data.system_time, 'cpu_load', system_data.cpu_load))
+        bulk_data.append(DataDTO(system_data.system_time, 'ram_usage', system_data.ram_usage))
+        bulk_data.append(DataDTO(system_data.system_time, 'started_at', system_data.started_at))
+        bulk_data.append(DataDTO(system_data.system_time, 'system', system_data.system))
+        bulk_data.append(DataDTO(system_data.system_time, 'received_packages', str(system_data.received_packages)))
+        bulk_data.append(DataDTO(system_data.system_time, 'sent_packages', str(system_data.sent_packages)))
+
+        if system_data.last_package_sent is not None:
+            bulk_data.append(DataDTO(system_data.system_time, 'last_package_received', system_data.last_package_received))
+
+        if system_data.last_package_sent is not None:
+            bulk_data.append(DataDTO(system_data.system_time, 'last_package_sent', system_data.last_package_sent))
+        http_impl.post_node_data_bulk(gateway_uuid, bulk_data)
 
         await asyncio.sleep(minutes * 60)
 
@@ -86,7 +99,7 @@ async def main(mode: str = 'mesh'):
 
     # TODO: adjust interval times (e.g. patch every 24 hours, system info every 10 minutes)
     pull_patch_task = asyncio.Task(pull_patch(0.08, data_splitter, http_impl, lora_impl))
-    system_info_task = asyncio.Task(send_system_info(0.016, system_info_impl, http_impl, data['uuid']))
+    system_info_task = asyncio.Task(send_system_info(0.5, system_info_impl, http_impl, data['uuid']))
     lora_listen_task = asyncio.Task(lora_listen(lora_impl))
 
     with suppress(asyncio.CancelledError):

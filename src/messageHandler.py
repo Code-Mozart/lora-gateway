@@ -63,7 +63,7 @@ class MessageHandlerMesh(MessageHandler):
                 measurement = mesh_package_decoder(message_json)
                 data = measurement.convert_to_dto()
 
-                # self.http_impl.post_node_data(measurement.uuid, data)
+                self.http_impl.post_node_data(measurement.uuid, data)
                 print(f'New measurement for node {measurement.uuid}')
 
                 return None

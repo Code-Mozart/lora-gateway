@@ -10,7 +10,7 @@ class HttpImpl:
     def __init__(self, hostname):
         self.hostname = hostname
 
-        self.headers = {"content-type": "application/json", "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtZG1hLWJhY2tlbmQiLCJzdWIiOiJINHI0bGREM3JINGNrM3IiLCJleHAiOjE2ODcwNzI4MTcsIm5iZiI6MTY4Njk4NjQxNywiaWF0IjoxNjg2OTg2NDE3LCJyb2xlIjoiYWRtaW4iLCJwZXJtaXNzaW9ucyI6WyJtZXNoX25vZGVfY3JlYXRlIiwibWVzaF9ub2RlX3JlYWQiLCJtZXNoX25vZGVfdXBkYXRlIiwibWVzaF9ub2RlX2RlbGV0ZSIsIm1lc2hfbm9kZV91cGRhdGVfY3JlYXRlIiwibWVzaF9ub2RlX3VwZGF0ZV9yZWFkIiwibWVzaF9ub2RlX3VwZGF0ZV9kZWxldGUiLCJkYXRhX2NyZWF0ZSIsImRhdGFfcmVhZCIsImRhdGFfZGVsZXRlIiwidXNlcl9hY2NvdW50X2NyZWF0ZSIsInVzZXJfYWNjb3VudF9yZWFkIiwidXNlcl9hY2NvdW50X3VwZGF0ZSIsInVzZXJfYWNjb3VudF9kZWxldGUiLCJzZXJ2aWNlX2FjY291bnRfY3JlYXRlIiwic2VydmljZV9hY2NvdW50X3JlYWQiLCJzZXJ2aWNlX2FjY291bnRfdXBkYXRlIiwic2VydmljZV9hY2NvdW50X2RlbGV0ZSIsInJvbGVfY3JlYXRlIiwicm9sZV9yZWFkIiwicm9sZV91cGRhdGUiLCJyb2xlX2RlbGV0ZSJdfQ.LPGiBzZgZRdOiBRJXy7rayZzz0MNAXw66wX2PISXlng"}
+        self.headers = {"content-type": "application/json", "Cookie": "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtZG1hLWJhY2tlbmQiLCJzdWIiOiJINHI0bGREM3JINGNrM3IiLCJleHAiOjE2ODcyNzgwNTUsIm5iZiI6MTY4NzE5MTY1NSwiaWF0IjoxNjg3MTkxNjU1LCJhY2NvdW50VHlwZSI6InVzZXIiLCJhY2NvdW50SUQiOjF9.p2KVsP3q9H9UFEHOqpzY319coz4Y6feQ66XusEInvsQ"}
 
     def post_node_data(self, uuid, data_dto: DataDTO):
         path = f'{paths.meshNodesBaseUrl}{uuid}{paths.meshNodesDataSuffix}'
@@ -37,7 +37,14 @@ class HttpImpl:
 
 
 def handle_response(response, decoder=None):
-    content = json.loads(response.content.decode('utf-8'))
+    content = response.content.decode('utf-8')
+
+    try:
+        content = json.loads(content)
+    except Exception as e:
+        print(str(content))
+        raise Exception('Bad response')
+
     handled = False
     if response.status_code == 200:
         print(f'Successful {response.request.method} request to {response.request.url}: \n{content}')

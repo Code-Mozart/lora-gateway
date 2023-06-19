@@ -43,6 +43,9 @@ class BulkDataDTO(DTO):
     def to_json(self):
         body = json.dumps(self, default=lambda o: o.__dict__)
         body_dict = json.loads(body)
+        for item in body_dict['bulk_data']:
+            item.pop('backend_id')
+            item.pop('createdAt')
         return json.dumps(body_dict['bulk_data'], default=lambda o: o.__dict__)
 
 
