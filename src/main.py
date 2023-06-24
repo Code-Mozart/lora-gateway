@@ -97,6 +97,8 @@ async def main(mode: str = 'mesh'):
         MessageHandlerMesh(http_impl, data_splitter) if mode == 'mesh' else MessageHandlerHop(http_impl, data_splitter)
     lora_impl: LoraImpl = LoraImpl(message_handler)
 
+    lora_impl.write_payload()
+
     # TODO: adjust interval times (e.g. patch every 24 hours, system info every 10 minutes)
     pull_patch_task = asyncio.Task(pull_patch(0.08, data_splitter, http_impl, lora_impl))
     system_info_task = asyncio.Task(send_system_info(0.5, system_info_impl, http_impl, data['uuid']))

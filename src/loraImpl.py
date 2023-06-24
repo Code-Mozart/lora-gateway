@@ -46,12 +46,14 @@ class LoraImpl(LoRa):
         self.set_mode(MODE.RXCONT)
 
     def on_tx_done(self):
-        # tx?
-        print("tx")
-
-    # def lora_write(self):
-    #    # self.write_payload()
-    #    print("write")
+        self.set_mode(MODE.STDBY)
+        self.clear_irq_flags(TxDone=1)
+        BOARD.led_off()
+        
+    def transmit(self,payload):
+        BOARD.led_on()
+        self.write_payload(payload)
+        self.set_mode(MODE.TX)
 
     async def lora_listen(self):
         self.set_mode(MODE.RXCONT)  # receiver mode
