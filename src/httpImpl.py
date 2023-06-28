@@ -10,7 +10,7 @@ class HttpImpl:
     def __init__(self, hostname):
         self.hostname = hostname
 
-        self.headers = {"content-type": "application/json", "Cookie": "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtZG1hLWJhY2tlbmQiLCJzdWIiOiJINHI0bGREM3JINGNrM3IiLCJleHAiOjE2ODcyNzgwNTUsIm5iZiI6MTY4NzE5MTY1NSwiaWF0IjoxNjg3MTkxNjU1LCJhY2NvdW50VHlwZSI6InVzZXIiLCJhY2NvdW50SUQiOjF9.p2KVsP3q9H9UFEHOqpzY319coz4Y6feQ66XusEInvsQ"}
+        self.headers = {"content-type": "application/json", "Cookie": "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtZG1hLWJhY2tlbmQiLCJzdWIiOiJINHI0bGREM3JINGNrM3IiLCJleHAiOjE2ODgwNDM3NDQsIm5iZiI6MTY4Nzk1NzM0NCwiaWF0IjoxNjg3OTU3MzQ0LCJhY2NvdW50VHlwZSI6InVzZXIiLCJhY2NvdW50SUQiOjF9.qOwjT8UmR6wjVHLmUfdgvu9HIBmBZ3yOSCzDnXMjsew"}
 
     def post_node_data(self, uuid, data_dto: DataDTO):
         path = f'{paths.meshNodesBaseUrl}{uuid}{paths.meshNodesDataSuffix}'
@@ -22,8 +22,11 @@ class HttpImpl:
     def post_node_data_bulk(self, uuid, data_dto_bulk: BulkDataDTO):
         path = f'{paths.meshNodesBaseUrl}{uuid}{paths.meshNodesDataListSuffix}'
         url = f'{self.hostname}{path}'
-        response = requests.post(url, data_dto_bulk.to_json(), headers=self.headers)
-        handle_response(response)
+        try:
+            response = requests.post(url, data_dto_bulk.to_json(), headers=self.headers)
+            handle_response(response)
+        except Exception as e:
+            None
 
     def get_update(self):
         path = f'{paths.updateBaseUrl}'
@@ -47,11 +50,11 @@ def handle_response(response, decoder=None):
 
     handled = False
     if response.status_code == 200:
-        print(f'Successful {response.request.method} request to {response.request.url}: \n{content}')
+        #print(f'Successful {response.request.method} request to {response.request.url}: \n{content}')
         handled = True
         return decode_content(content, decoder)
     if response.status_code == 201:
-        print(f'Created at {response.request.url}: \n{content}')
+        #print(f'Created at {response.request.url}: \n{content}')
         handled = True
         return decode_content(content, decoder)
     if response.status_code == 401:
